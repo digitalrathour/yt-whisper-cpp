@@ -21,3 +21,6 @@ RUN pip install yt-dlp
 
 # Run the start script
 CMD ["./start.sh"]
+RUN pip install flask
+EXPOSE 8000
+CMD ["python", "app.py"]
