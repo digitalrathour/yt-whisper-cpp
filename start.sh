@@ -1,16 +1,10 @@
 #!/bin/bash
 
-set -e
+# Clone and build whisper.cpp
+bash whispercpp/whispercpp/clone_and_build.sh
 
-echo "📥 Cloning whisper.cpp..."
-git clone https://github.com/ggerganov/whisper.cpp.git
-cd whisper.cpp
-make
-cd ..
+# Download model
+bash whispercpp/download_model.sh
 
-echo "📥 Downloading model..."
-mkdir -p models
-curl -L -o models/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
-
-echo "🚀 Starting transcription..."
-python3 transcribe.py "$YOUTUBE_URL"
+# Start the app server
+python3 app.py
