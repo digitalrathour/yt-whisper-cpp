@@ -13,13 +13,17 @@ def transcribe():
         return jsonify({"error": "URL is required"}), 400
 
     try:
+        # Remove old audio if it exists
+        if os.path.exists("audio.mp3"):
+            os.remove("audio.mp3")
+
         # Download using yt-dlp
         subprocess.run(["yt-dlp", "-x", "--audio-format", "mp3", url, "-o", "audio.%(ext)s"], check=True)
 
         # Run whisper.cpp transcription
         subprocess.run(["./main", "-m", "models/ggml-base.en.bin", "-f", "audio.mp3", "-otxt"], check=True)
 
-        # Return result
+        # Read and return transcription
         with open("audio.txt", "r") as f:
             transcription = f.read()
 
