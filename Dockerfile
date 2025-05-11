@@ -1,24 +1,23 @@
-FROM debian:bullseye-slim
+FROM python:3.10-slim
 
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ENV WHISPER_CPP_REPO=https://github.com/ggerganov/whisper.cpp.git
-
-# Install system dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    git build-essential curl ffmpeg python3 python3-pip && \
-    rm -rf /var/lib/apt/lists/*
+    git \
+    build-essential \
+    curl \
+    ffmpeg
 
-# Clone and build whisper.cpp
-RUN git clone --depth 1 $WHISPER_CPP_REPO /app/whisper.cpp && \
-    cd /app/whisper.cpp && make
-
-# Copy transcribe script
+# Set working directory
 WORKDIR /app
-COPY transcribe.py .
 
-# Install Python requirements
-RUN pip3 install yt-dlp
+# Copy files
+COPY . .
 
-# Run on container start
-ENTRYPOINT ["python3", "transcribe.py"]
+# Make script executable
+RUN chmod +x start.sh
+
+# Install yt-dlp
+RUN pip install yt-dlp
+
+# Run the start script
+CMD ["./start.sh"]
