@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     build-essential \
@@ -10,18 +10,14 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy everything
+# Copy all files into container
 COPY . .
 
-# Make scripts executable
-RUN chmod +x whispercpp/clone_and_build.sh whispercpp/download_model.sh start.sh
-
-# Run setup scripts
-RUN bash whispercpp/clone_and_build.sh && \
-    bash whispercpp/download_model.sh
+# Make all required shell scripts executable
+RUN chmod +x whispercpp/whispercpp/clone_and_build.sh whispercpp/download_model.sh start.sh
 
 # Install yt-dlp
 RUN pip install yt-dlp
 
-# Start the app
+# Run start script
 CMD ["./start.sh"]
