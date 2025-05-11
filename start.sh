@@ -6,5 +6,5 @@ bash whispercpp/whispercpp/clone_and_build.sh
 # Download model
 bash whispercpp/download_model.sh
 
-# Start the app server
+# Run Flask app
 python3 app.py
