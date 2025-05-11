@@ -10,17 +10,18 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy files
+# Copy everything
 COPY . .
 
-# Make script executable
-RUN chmod +x start.sh
+# Make scripts executable
+RUN chmod +x whispercpp/clone_and_build.sh whispercpp/download_model.sh start.sh
+
+# Run setup scripts
+RUN bash whispercpp/clone_and_build.sh && \
+    bash whispercpp/download_model.sh
 
 # Install yt-dlp
 RUN pip install yt-dlp
 
-# Run the start script
+# Start the app
 CMD ["./start.sh"]
-RUN pip install flask
-EXPOSE 8000
-CMD ["python", "app.py"]
