@@ -1,23 +1,34 @@
 FROM python:3.10-slim
 
-# Install system dependencies
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
     git \
     build-essential \
     curl \
-    ffmpeg
+    ffmpeg \
+    cmake \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages
+RUN pip install flask yt-dlp
 
 # Set working directory
 WORKDIR /app
 
-# Copy all files into container
+# Copy all source code
 COPY . .
 
-# Make all required shell scripts executable
-RUN chmod +x whispercpp/whispercpp/clone_and_build.sh whispercpp/download_model.sh start.sh
+# Clean up previous whisper.cpp folder if it exists
+RUN rm -rf whispercpp/whisper.cpp
 
-# Install yt-dlp
-RUN pip install yt-dlp
+# Clone and build whisper.cpp
+RUN git clone https://github.com/ggerganov/whisper.cpp.git whispercpp/whisper.cpp && \
+    cd whispercpp/whisper.cpp && \
+    make
 
-# Run start script
-CMD ["./start.sh"]
+# Download the model
+RUN curl -L -o whispercpp/whisper.cpp/models/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/models/ggml-base.en.bin
+
+# Run app.py
+CMD ["python", "app.py"]
